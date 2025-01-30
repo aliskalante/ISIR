@@ -49,11 +49,15 @@ namespace RT_ISICG
 			for ( int i = 0; i < width; i++ )
 			{
 				
-				float r = float( i ) / float( width - 1 );  
-				float g = float( j ) / float( height - 1 ); 
-				float b = 0.0f;			
-
-				 Vec3f color( r, g, b ); 
+				//float r = float( i ) / float( width - 1 );  
+				//float g = float( j ) / float( height - 1 ); 
+				//float b = 0.0f;			
+				float p_sx = float( i ) / float( width - 1 );
+				float p_sy = float( j ) / float( height - 1 ); 
+				Ray	  ray  = p_camera->generateRay( p_sx, p_sy );
+				 //Vec3f color( r, g, b ); 
+				Vec3f direction = ray.getDirection();
+				Vec3f color		= ( direction + 1.f ) * 0.5f;
 				p_texture.setPixel( i, j, color );
 				/// TODO !
 			}

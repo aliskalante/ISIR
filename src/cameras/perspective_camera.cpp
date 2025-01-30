@@ -37,7 +37,7 @@ namespace RT_ISICG
 
 		
 		_viewportU = _u * viewportWidth;
-		_viewportV = -_v * viewportHeight; 
+		_viewportV = -_v * viewportHeight;
 	}
 
 
