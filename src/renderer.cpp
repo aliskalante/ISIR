@@ -1,4 +1,5 @@
 #include "renderer.hpp"
+
 #include "integrators/ray_cast_integrator.hpp"
 #include "utils/console_progress_bar.hpp"
 #include "utils/random.hpp"
@@ -6,6 +7,7 @@
 namespace RT_ISICG
 {
 	Renderer::Renderer() { _integrator = new RayCastIntegrator(); }
+	
 
 	void Renderer::setIntegrator( const IntegratorType p_integratorType )
 	{
@@ -46,6 +48,13 @@ namespace RT_ISICG
 		{
 			for ( int i = 0; i < width; i++ )
 			{
+				
+				float r = float( i ) / float( width - 1 );  
+				float g = float( j ) / float( height - 1 ); 
+				float b = 0.0f;			
+
+				 Vec3f color( r, g, b ); 
+				p_texture.setPixel( i, j, color );
 				/// TODO !
 			}
 			progressBar.next();
