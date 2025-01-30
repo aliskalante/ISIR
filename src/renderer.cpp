@@ -52,12 +52,27 @@ namespace RT_ISICG
 				//float r = float( i ) / float( width - 1 );  
 				//float g = float( j ) / float( height - 1 ); 
 				//float b = 0.0f;			
-				float p_sx = float( i ) / float( width - 1 );
-				float p_sy = float( j ) / float( height - 1 ); 
-				Ray	  ray  = p_camera->generateRay( p_sx, p_sy );
+				//float p_sx = float( i ) / float( width - 1 );
+				//float p_sy = float( j ) / float( height - 1 ); 
+				//Ray	  ray  = p_camera->generateRay( p_sx, p_sy );
 				 //Vec3f color( r, g, b ); 
-				Vec3f direction = ray.getDirection();
-				Vec3f color		= ( direction + 1.f ) * 0.5f;
+				//Vec3f direction = ray.getDirection();
+				//Vec3f color		= ( direction + 1.f ) * 0.5f;
+				//p_texture.setPixel( i, j, color );
+				float r = float( i ) / float( width - 1 );
+				float g = float( j ) / float( height - 1 );
+				float b = 0.0f;
+
+				
+				Ray ray = p_camera->generateRay( r, g );
+
+				
+				Vec3f color = _integrator.Li( p_scene, ray );
+
+				
+				color = ( color + 1.0f ) * 0.5f;
+
+				
 				p_texture.setPixel( i, j, color );
 				/// TODO !
 			}
