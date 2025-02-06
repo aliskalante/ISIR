@@ -10,6 +10,7 @@ namespace RT_ISICG
 		HitRecord hitRecord;
 		if ( p_scene.intersect( p_ray, p_tMin, p_tMax, hitRecord ) )
 		{
+<<<<<<< HEAD
 			// Récupérer la couleur de base du matériau
 			LightSample lightSample( Vec3f( 0.f ), 1.f, Vec3f( 1.f ), 1.f ); // Factice
 			Vec3f		color = hitRecord._object->getMaterial()->shade( p_ray, hitRecord, lightSample );
@@ -24,3 +25,14 @@ namespace RT_ISICG
 		else { return _backgroundColor; }
 	}
 } // namespace RT_ISICG
+=======
+			/// TODO ! cos theta...
+			return hitRecord._object->getMaterial()->getFlatColor();
+		}
+		else
+		{
+			return _backgroundColor;
+		}
+	}
+} // namespace RT_ISICG
+>>>>>>> 4af3f8b2a3ea77a2070e01fafeb0db1e850db2d5

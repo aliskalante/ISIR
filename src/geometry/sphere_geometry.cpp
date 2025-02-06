@@ -3,7 +3,10 @@
 
 namespace RT_ISICG
 {
+<<<<<<< HEAD
 	
+=======
+>>>>>>> 4af3f8b2a3ea77a2070e01fafeb0db1e850db2d5
 	bool SphereGeometry::intersect( const Ray & p_ray, float & p_t1, float & p_t2 ) const
 	{
 
@@ -29,7 +32,12 @@ namespace RT_ISICG
 
 			if ( p_t1 > p_t2 ) { std::swap( p_t1, p_t2 ); }
 
+<<<<<<< HEAD
 			
+=======
+			p_t1 = -1.f;
+			p_t2 = -1.f;
+>>>>>>> 4af3f8b2a3ea77a2070e01fafeb0db1e850db2d5
 
 			return true;
 		}

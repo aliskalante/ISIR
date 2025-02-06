@@ -59,6 +59,7 @@ namespace RT_ISICG
 				//Vec3f direction = ray.getDirection();
 				//Vec3f color		= ( direction + 1.f ) * 0.5f;
 				//p_texture.setPixel( i, j, color );
+<<<<<<< HEAD
 				float sx = float( i ) / float( width - 1 );
 				float sy = float( j ) / float( height - 1 );
 
@@ -70,6 +71,23 @@ namespace RT_ISICG
 
 				p_texture.setPixel( i, j, color );
 			
+=======
+				float r = float( i ) / float( width - 1 );
+				float g = float( j ) / float( height - 1 );
+				float b = 0.0f;
+
+				
+				Ray ray = p_camera->generateRay( r, g );
+
+				
+				Vec3f color = _integrator.Li( p_scene, ray );
+
+				
+				color = ( color + 1.0f ) * 0.5f;
+
+				
+				p_texture.setPixel( i, j, color );
+>>>>>>> 4af3f8b2a3ea77a2070e01fafeb0db1e850db2d5
 				/// TODO !
 			}
 			progressBar.next();
