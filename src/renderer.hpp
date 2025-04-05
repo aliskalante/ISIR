@@ -19,12 +19,15 @@ namespace RT_ISICG
 		void setBackgroundColor( const Vec3f & p_color );
 
 		inline void setNbPixelSamples( const int p_nbPixelSamples ) { _nbPixelSamples = p_nbPixelSamples; }
-
-		float renderImage( const Scene & p_scene, const BaseCamera * p_camera, Texture & p_texture );
+		inline void setNbBounces( const int p_nbBounces ) { _nbBounces = p_nbBounces; }
+		inline void setNbLightSamples( const int p_nbLightSamples ) { _nbLightSamples = p_nbLightSamples; }
+		float		renderImage( const Scene & p_scene, const BaseCamera * p_camera, Texture & p_texture );
 
 	  private:
 		BaseIntegrator * _integrator	 = nullptr;
-		int				 _nbPixelSamples = 1;
+		int				 _nbPixelSamples = 32;
+		int				 _nbLightSamples = 1;
+		int				 _nbBounces		 = 5;
 	};
 } // namespace RT_ISICG
 

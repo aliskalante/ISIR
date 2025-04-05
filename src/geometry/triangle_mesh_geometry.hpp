@@ -13,10 +13,7 @@ namespace RT_ISICG
 		TriangleMeshGeometry()			= delete;
 		virtual ~TriangleMeshGeometry() = default;
 
-		TriangleMeshGeometry( const unsigned int p_v0,
-							  const unsigned int p_v1,
-							  const unsigned int p_v2,
-							  MeshTriangle *	 p_refMesh );
+		TriangleMeshGeometry( const uint p_v0, const uint p_v1, const uint p_v2, MeshTriangle * p_refMesh );
 
 		bool intersect( const Ray & p_ray, float & p_t ) const;
 
@@ -28,9 +25,9 @@ namespace RT_ISICG
 		{
 			struct
 			{
-				unsigned int _v0, _v1, _v2;
+				uint _v0, _v1, _v2;
 			};
-			unsigned int _v[ 3 ] = { 0, 0, 0 };
+			uint _v[ 3 ] = { 0, 0, 0 };
 		};
 
 		Vec3f _faceNormal;

@@ -19,11 +19,11 @@ namespace RT_ISICG
 		}
 		bool isLeaf() const { return ( _left == nullptr && _right == nullptr ); }
 
-		AABB		 _aabb;
-		BVHNode *	 _left			  = nullptr;
-		BVHNode *	 _right			  = nullptr;
-		unsigned int _firstTriangleId = 0;
-		unsigned int _lastTriangleId  = 0;
+		AABB	  _aabb;
+		BVHNode * _left			   = nullptr;
+		BVHNode * _right		   = nullptr;
+		uint	  _firstTriangleId = 0;
+		uint	  _lastTriangleId  = 0;
 	};
 
 	class BVH
@@ -41,10 +41,7 @@ namespace RT_ISICG
 		bool intersectAny( const Ray & p_ray, const float p_tMin, const float p_tMax ) const;
 
 	  private:
-		void _buildRec( BVHNode *		   p_node,
-						const unsigned int p_firstTriangleId,
-						const unsigned int p_nbTriangles,
-						const unsigned int p_depth );
+		void _buildRec( BVHNode * p_node, const uint p_firstTriangleId, const uint p_nbTriangles, const uint p_depth );
 
 		bool _intersectRec( const BVHNode * p_node,
 							const Ray &		p_ray,
@@ -61,8 +58,8 @@ namespace RT_ISICG
 		std::vector<TriangleMeshGeometry> * _triangles = nullptr;
 		BVHNode *							_root	   = nullptr;
 
-		const unsigned int _maxTrianglesPerLeaf = 8;
-		const unsigned int _maxDepth			= 32;
+		const uint _maxTrianglesPerLeaf = 8;
+		const uint _maxDepth			= 32;
 	};
 
 } // namespace RT_ISICG

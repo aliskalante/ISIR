@@ -1,5 +1,6 @@
 #include "renderer.hpp"
-
+#include "integrators/Whitted_integrator.h"
+#include "integrators/direct_lighting_integrator.h"
 #include "integrators/ray_cast_integrator.hpp"
 #include "utils/console_progress_bar.hpp"
 #include "utils/random.hpp"
@@ -7,7 +8,6 @@
 namespace RT_ISICG
 {
 	Renderer::Renderer() { _integrator = new RayCastIntegrator(); }
-	
 
 	void Renderer::setIntegrator( const IntegratorType p_integratorType )
 	{
@@ -15,10 +15,25 @@ namespace RT_ISICG
 
 		switch ( p_integratorType )
 		{
+		case IntegratorType::DIRECT_LIGHT:
+		{
+			_integrator = new DirectLightingIntegrator( _nbLightSamples );
+			break;
+		}
 		case IntegratorType::RAY_CAST:
+		{
+			_integrator = new RayCastIntegrator();
+			break;
+		}
+
 		default:
 		{
 			_integrator = new RayCastIntegrator();
+			break;
+		}
+		case IntegratorType::WHITTED:
+		{
+			_integrator = new WhittedIntegrator( _nbLightSamples, _nbBounces );
 			break;
 		}
 		}
@@ -27,10 +42,7 @@ namespace RT_ISICG
 	void Renderer::setBackgroundColor( const Vec3f & p_color )
 	{
 		if ( _integrator == nullptr ) { std::cout << "[Renderer::setBackgroundColor] Integrator is null" << std::endl; }
-		else
-		{
-			_integrator->setBackgroundColor( p_color );
-		}
+		else { _integrator->setBackgroundColor( p_color ); }
 	}
 
 	float Renderer::renderImage( const Scene & p_scene, const BaseCamera * p_camera, Texture & p_texture )
@@ -44,51 +56,24 @@ namespace RT_ISICG
 		progressBar.start( height, 50 );
 		chrono.start();
 
+#pragma omp parallel for
 		for ( int j = 0; j < height; j++ )
 		{
 			for ( int i = 0; i < width; i++ )
 			{
-				
-				//float r = float( i ) / float( width - 1 );  
-				//float g = float( j ) / float( height - 1 ); 
-				//float b = 0.0f;			
-				//float p_sx = float( i ) / float( width - 1 );
-				//float p_sy = float( j ) / float( height - 1 ); 
-				//Ray	  ray  = p_camera->generateRay( p_sx, p_sy );
-				 //Vec3f color( r, g, b ); 
-				//Vec3f direction = ray.getDirection();
-				//Vec3f color		= ( direction + 1.f ) * 0.5f;
-				//p_texture.setPixel( i, j, color );
-
-				float sx = float( i ) / float( width - 1 );
-				float sy = float( j ) / float( height - 1 );
-
-				// Génération du rayon
-				Ray ray = p_camera->generateRay( sx, sy );
-
-				
-				Vec3f color = _integrator->Li( p_scene, ray, 0.f, 10000.f );
-
-				p_texture.setPixel( i, j, color );
-			
-
-				float r = float( i ) / float( width - 1 );
-				float g = float( j ) / float( height - 1 );
-				float b = 0.0f;
-
-				
-				Ray ray = p_camera->generateRay( r, g );
-
-				
-				Vec3f color = _integrator.Li( p_scene, ray );
-
-				
-				color = ( color + 1.0f ) * 0.5f;
-
-				
-				p_texture.setPixel( i, j, color );
-
-				/// TODO !
+				Vec3f color = VEC3F_ZERO;
+				auto  r		= double( i ) / ( width - 1 );
+				auto  g		= double( j ) / ( height - 1 );
+				auto  b		= 0;
+				for ( int x = 0; x < _nbPixelSamples; x++ )
+				{
+					Ray ray = p_camera->generateRay( ( i + randomFloat() ) / ( width - 1.f ),
+													 ( j + randomFloat() ) / ( height - 1.f ) );
+					color += _integrator->Li( p_scene, ray, 0, 1000 );
+				}
+				// p_texture.setPixel( i, j, ( color / (float)_nbPixelSamples ) );
+				p_texture.setPixel(
+					i, j, glm::clamp( color / float( _nbPixelSamples ), VEC3F_ZERO, Vec3f( 1, 1, 1 ) ) );
 			}
 			progressBar.next();
 		}

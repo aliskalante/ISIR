@@ -21,12 +21,9 @@ namespace RT_ISICG
 		virtual inline void			  setMaterial( BaseMaterial * p_material ) final { _material = p_material; }
 
 		// Check for nearest intersection: if found fill p_hitRecord.
-		virtual bool intersect( const Ray & p_ray,
-								const float p_tMin,
-								const float p_tMax,
-								HitRecord & p_hitRecord ) const = 0;
+		virtual bool intersect( const Ray & p_ray,const float p_tMin, const float p_tMax, HitRecord & p_hitRecord ) const = 0;
 
-		// Check for any intersection.
+		// Check for any intersection 
 		virtual bool intersectAny( const Ray & p_ray, const float p_tMin, const float p_tMax ) const = 0;
 
 	  protected:

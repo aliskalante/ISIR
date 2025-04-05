@@ -15,30 +15,17 @@ namespace RT_ISICG
 
 		virtual ~ColorMaterial() = default;
 
-
-		// Version simplifiée pour le RayCastIntegrator
-		Vec3f shade( const Ray &		 p_ray,
-					 const HitRecord &	 p_hitRecord,
-					 const LightSample & p_lightSample ) const override
-		{
-			// Ignorer tous les paramètres et retourner la couleur unie
-
 		Vec3f shade( const Ray & p_ray, const HitRecord & p_hit, const LightSample & p_lightSample ) const override
 		{
-
 			return _color;
 		}
 
 		inline const Vec3f & getFlatColor() const override { return _color; }
 
 	  protected:
-
-		Vec3f _color = WHITE;
-
 		Vec3f _color = Vec3f( 1.f, 1.f, 1.f );
-
 	};
 
 } // namespace RT_ISICG
 
-
+#endif // __RT_ISICG_COLOR_MATERIAL__

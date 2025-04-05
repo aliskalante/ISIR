@@ -18,15 +18,7 @@ namespace RT_ISICG
 
 		bool intersect( const Ray & p_ray, float & p_t1, float & p_t2 ) const;
 
-		inline Vec3f computeNormal( const Vec3f & p_point ) const
-		{
-
-			return glm::normalize( p_point - _center ); 
-
-			/// TODO !
-			return Vec3f( 1.f );
-
-		}
+		inline Vec3f computeNormal( const Vec3f & p_point ) const { return Vec3f( p_point - _center ); }
 
 	  private:
 		Vec3f _center = VEC3F_ZERO;

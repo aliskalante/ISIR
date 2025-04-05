@@ -19,15 +19,9 @@ namespace RT_ISICG
 		inline bool isValid() const { return ( ( _min.x <= _max.x ) && ( _min.y <= _max.y ) && ( _min.z <= _max.z ) ); }
 
 		// Extends the AABB with a point
-		inline void extend( const Vec3f & p_point )
-		{
-			/// TODO
-		}
+		inline void extend( const Vec3f & p_point );
 		// Extends the AABB with another AABB
-		inline void extend( const AABB & p_aabb )
-		{
-			/// TODO
-		}
+		inline void extend( const AABB & p_aabb );
 
 		// Returns the AABB diagonal vector.
 		inline Vec3f diagonal() const { return _max - _min; }

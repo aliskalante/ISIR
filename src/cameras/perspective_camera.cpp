@@ -15,39 +15,18 @@ namespace RT_ISICG
 										  const float	p_aspectRatio )
 		: BaseCamera( p_position ), _fovy( p_fovy ), _aspectRatio( p_aspectRatio )
 	{
-
-		_w = glm::normalize( p_lookAt - p_position );
-
-		
-		_u = glm::normalize( glm::cross( p_up, _w ) );
-
-		
-		_v = glm::cross( _w, _u );
-
-		/// TODO ! _u ? _v ? _w ?
+		_w = normalize( p_position - p_lookAt );
+		_u = normalize( cross( p_up, _w ) );
+		_v = cross( _w, _u );
 
 		_updateViewport();
 	}
 
 	void PerspectiveCamera::_updateViewport()
 	{
-		
-		float viewportHeight = 2.0f * _focalDistance * tan( glm::radians( _fovy ) / 2.0f );
-
-	
-		float viewportWidth = viewportHeight * _aspectRatio;
-
-		
-
-		
-		_viewportTopLeftCorner = _position - ( _w * _focalDistance ) 
-								 - ( _u * viewportWidth * 0.5f )	 
-								 + ( _v * viewportHeight * 0.5f );	 
-
-		
-		_viewportU = _u * viewportWidth;
-		_viewportV = -_v * viewportHeight;
+		_viewportV			   = _v * 2.0f * tan( glm::radians( _fovy * 0.5f ) ) * _focalDistance;
+		_viewportU			   = _u * 2.0f * tan( glm ::radians( _fovy * 0.5f ) ) * _focalDistance * _aspectRatio;
+		_viewportTopLeftCorner = -_w * _focalDistance + _position + _viewportV * 0.5f - _viewportU * 0.5f;
 	}
-
 
 } // namespace RT_ISICG

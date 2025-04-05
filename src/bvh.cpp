@@ -35,10 +35,10 @@ namespace RT_ISICG
 		return false;
 	}
 
-	void BVH::_buildRec( BVHNode *			p_node,
-						 const unsigned int p_firstTriangleId,
-						 const unsigned int p_lastTriangleId,
-						 const unsigned int p_depth )
+	void BVH::_buildRec( BVHNode *	p_node,
+						 const uint p_firstTriangleId,
+						 const uint p_lastTriangleId,
+						 const uint p_depth )
 	{
 		/// TODO
 	}

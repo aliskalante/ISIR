@@ -3,10 +3,10 @@
 
 namespace RT_ISICG
 {
-	TriangleMeshGeometry::TriangleMeshGeometry( const unsigned int p_v0,
-												const unsigned int p_v1,
-												const unsigned int p_v2,
-												MeshTriangle *	   p_refMesh )
+	TriangleMeshGeometry::TriangleMeshGeometry( const uint	   p_v0,
+												const uint	   p_v1,
+												const uint	   p_v2,
+												MeshTriangle * p_refMesh )
 		: _v0( p_v0 ), _v1( p_v1 ), _v2( p_v2 ), _refMesh( p_refMesh )
 	{
 		_faceNormal = glm::normalize( glm::cross( _refMesh->_vertices[ p_v1 ] - _refMesh->_vertices[ p_v0 ],

@@ -19,7 +19,7 @@ namespace RT_ISICG
 		const size_t getNbTriangles() const { return _triangles.size(); }
 		const size_t getNbVertices() const { return _vertices.size(); }
 
-		inline void addTriangle( const unsigned int p_v0, const unsigned int p_v1, const unsigned int p_v2 )
+		inline void addTriangle( const uint p_v0, const uint p_v1, const uint p_v2 )
 		{
 			_triangles.emplace_back( TriangleMeshGeometry( p_v0, p_v1, p_v2, this ) );
 		};
