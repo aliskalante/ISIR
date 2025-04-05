@@ -20,12 +20,12 @@ namespace RT_ISICG
 
 		inline Vec3f computeNormal( const Vec3f & p_point ) const
 		{
-<<<<<<< HEAD
+
 			return glm::normalize( p_point - _center ); 
-=======
+
 			/// TODO !
 			return Vec3f( 1.f );
->>>>>>> 4af3f8b2a3ea77a2070e01fafeb0db1e850db2d5
+
 		}
 
 	  private:
