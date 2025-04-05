@@ -1,13 +1,13 @@
 #include "scene.hpp"
-#include "lights/QuadLight.h"
-#include "lights/point_light.h"
-#include "materials/BlinnPlasticMaterial.h"
-#include "materials/MatteMaterial.h"
-#include "materials/MicrofacetMaterial.h"
-#include "materials/MirrorMaterial.h"
+//#include "lights/QuadLight.h"
+//#include "lights/point_light.h"
+//#include "materials/BlinnPlasticMaterial.h"
+//#include "materials/MatteMaterial.h"
+//#include "materials/MicrofacetMaterial.h"
+//#include "materials/MirrorMaterial.h"
 #include "materials/color_material.hpp"
 #include "materials/lambert_material.hpp"
-#include "objects/plane.hpp"
+//#include "objects/plane.hpp"
 #include "objects/sphere.hpp"
 
 namespace RT_ISICG
@@ -31,7 +31,7 @@ namespace RT_ISICG
 	}
 
 	void Scene::init()
-	{
+	{ /*
 		// =========================================================================
 		// Add materials
 		// =========================================================================
@@ -67,7 +67,7 @@ namespace RT_ISICG
 
 		// Add Lights
 		_addLight( new PointLight( WHITE, 100.f, Vec3f( 0.f, 5.f, 0.f ) ) );
-		//_addLight( new QuadLight( Vec3f( 1, 5, 1 ), Vec3f( -2, 0, 0 ), Vec3f( 0, 1, 2 ), WHITE, 40.f ) );
+		//_addLight( new QuadLight( Vec3f( 1, 5, 1 ), Vec3f( -2, 0, 0 ), Vec3f( 0, 1, 2 ), WHITE, 40.f ) );*/
 	}
 
 	bool Scene::intersect( const Ray & p_ray, const float p_tMin, const float p_tMax, HitRecord & p_hitRecord ) const

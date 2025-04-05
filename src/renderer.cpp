@@ -1,6 +1,6 @@
 #include "renderer.hpp"
-#include "integrators/Whitted_integrator.h"
-#include "integrators/direct_lighting_integrator.h"
+//#include "integrators/Whitted_integrator.h"
+//#include "integrators/direct_lighting_integrator.h"
 #include "integrators/ray_cast_integrator.hpp"
 #include "utils/console_progress_bar.hpp"
 #include "utils/random.hpp"
@@ -15,11 +15,11 @@ namespace RT_ISICG
 
 		switch ( p_integratorType )
 		{
-		case IntegratorType::DIRECT_LIGHT:
+		/* case IntegratorType::DIRECT_LIGHT:
 		{
 			_integrator = new DirectLightingIntegrator( _nbLightSamples );
 			break;
-		}
+		}*/
 		case IntegratorType::RAY_CAST:
 		{
 			_integrator = new RayCastIntegrator();
@@ -31,11 +31,11 @@ namespace RT_ISICG
 			_integrator = new RayCastIntegrator();
 			break;
 		}
-		case IntegratorType::WHITTED:
+		/* case IntegratorType::WHITTED:
 		{
 			_integrator = new WhittedIntegrator( _nbLightSamples, _nbBounces );
 			break;
-		}
+		}*/
 		}
 	}
 
