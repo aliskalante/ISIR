@@ -1,4 +1,4 @@
-// whitted_integrator.cpp
+
 #include "WhittedIntegrator.hpp"
 #include <cmath>
 #include <glm/glm.hpp>
