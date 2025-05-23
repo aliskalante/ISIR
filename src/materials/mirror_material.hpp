@@ -1,4 +1,3 @@
-// mirror_material.hpp
 #ifndef __RT_ISICG_MIRROR_MATERIAL__
 #define __RT_ISICG_MIRROR_MATERIAL__
 
@@ -15,16 +14,13 @@ namespace RT_ISICG
 
 		Vec3f shade( const Ray & ray, const HitRecord & hit, const LightSample & sample ) const override
 		{
-			// Matériau miroir : renvoie toujours du noir (géré en intégrateur)
+			// L'intégrateur gère l'effet miroir
 			return BLACK;
 		}
 
-		inline const Vec3f & getFlatColor() const override { return BLACK; }
+		const Vec3f & getFlatColor() const override { return BLACK; }
 
-		const bool isMirror() const { return true; }
-
-	  protected:
-		// Pas d’attributs supplémentaires
+		bool isMirror() const override { return true; }
 	};
 } // namespace RT_ISICG
 

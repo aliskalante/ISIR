@@ -223,19 +223,6 @@ xcopy /y /d  "$(ProjectDir)lib\zlib1.dll" "$(OutDir)"</Command>
     <ClInclude Include="src\utils\chrono.hpp" />
     <ClInclude Include="src\utils\console_progress_bar.hpp" />
   </ItemGroup>
-  <ItemGroup>
-    <Object Include="..\Bunny.obj" />
-    <Object Include="..\conference\conference.obj" />
-    <Object Include="..\uvsphere.obj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Bunny.mtl" />
-    <None Include="..\conference\conference.mtl" />
-    <None Include="..\uvsphere.mtl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\conference\copyright.txt" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

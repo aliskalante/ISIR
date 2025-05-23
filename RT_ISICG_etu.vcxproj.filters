@@ -60,12 +60,6 @@
     <Filter Include="Header Files\brdfs">
       <UniqueIdentifier>{051f0f37-5291-419b-af5c-d992cda5fe44}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\objets">
-      <UniqueIdentifier>{1e7be4dd-7d1f-466b-8cfd-07494cbd031d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\objets\conference">
-      <UniqueIdentifier>{93dc1691-d5f5-4ebf-97f8-f8b838ad75fa}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -274,32 +268,5 @@
     <ClInclude Include="src\objects\plane.hpp">
       <Filter>Header Files\objects</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="..\Bunny.obj">
-      <Filter>Source Files\objets</Filter>
-    </Object>
-    <Object Include="..\uvsphere.obj">
-      <Filter>Source Files\objets</Filter>
-    </Object>
-    <Object Include="..\conference\conference.obj">
-      <Filter>Source Files\objets\conference</Filter>
-    </Object>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Bunny.mtl">
-      <Filter>Source Files\objets</Filter>
-    </None>
-    <None Include="..\uvsphere.mtl">
-      <Filter>Source Files\objets</Filter>
-    </None>
-    <None Include="..\conference\conference.mtl">
-      <Filter>Source Files\objets\conference</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\conference\copyright.txt">
-      <Filter>Source Files\objets\conference</Filter>
-    </Text>
   </ItemGroup>
 </Project>

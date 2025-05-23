@@ -1,4 +1,3 @@
-
 #ifndef __RT_ISICG_MESH_TRIANGLE__
 #define __RT_ISICG_MESH_TRIANGLE__
 
@@ -31,13 +30,13 @@ namespace RT_ISICG
 
 		inline void addUV( float u, float v ) { _uvList.emplace_back( u, v ); }
 
-		inline void addFace( unsigned int i0, unsigned int i1, unsigned int i2 )
+		// Ajoute un triangle via indices des sommets
+		inline void addTriangle( unsigned int i0, unsigned int i1, unsigned int i2 )
 		{
 			_faceList.emplace_back( TriangleMeshGeometry( i0, i1, i2, this ) );
 		}
 
 		bool intersect( const Ray & ray, float tMin, float tMax, HitRecord & record ) const override;
-
 		bool intersectAny( const Ray & ray, float tMin, float tMax ) const override;
 
 	  private:

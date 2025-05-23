@@ -1,8 +1,7 @@
-
+// transparent_material.hpp
 #ifndef __RT_ISICG_TRANSPARENT_MATERIAL__
 #define __RT_ISICG_TRANSPARENT_MATERIAL__
 
-#include "defines.hpp"
 #include "materials/base_material.hpp"
 
 namespace RT_ISICG
@@ -10,26 +9,25 @@ namespace RT_ISICG
 	class TransparentMaterial : public BaseMaterial
 	{
 	  public:
-		TransparentMaterial( const std::string & materialName, float refractIdx )
-			: BaseMaterial( materialName ), _refractionIndex( refractIdx )
+		TransparentMaterial( const std::string & materialName, float ior ) : BaseMaterial( materialName ), _ior( ior )
 		{
 		}
-
 		virtual ~TransparentMaterial() = default;
 
-		Vec3f shade( const Ray & ray, const HitRecord & hit, const LightSample & sample ) const override
+		// on ne fait rien ici : la vraie transparence est gérée par l'intégrateur
+		Vec3f shade( const Ray & ray, const HitRecord & hit, const LightSample & lightSample ) const override
 		{
-			// La gestion de la transparence se fait dans l'intégrateur
 			return BLACK;
 		}
 
-		inline const Vec3f & getFlatColor() const override { return BLACK; }
+		const Vec3f & getFlatColor() const override { return BLACK; }
 
-		bool  isTransparent() const { return true; }
-		float getIOR() const { return _refractionIndex; }
+		bool isTransparent() const override { return true; }
+
+		float getIOR() const override { return _ior; }
 
 	  protected:
-		float _refractionIndex = 1.3f;
+		float _ior = 1.3f;
 	};
 } // namespace RT_ISICG
 
