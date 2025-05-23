@@ -1,4 +1,4 @@
-// main.cpp
+
 #include "cameras/perspective_camera.hpp"
 #include "defines.hpp"
 #include "renderer.hpp"
@@ -10,14 +10,14 @@ namespace RT_ISICG
 		const int width	 = 600;
 		const int height = 400;
 
-		// Crée la texture de rendu
+		// CrÃ©e la texture de rendu
 		Texture frame( width, height );
 
-		// Initialise la scène
+		// Initialise la scÃ¨ne
 		Scene scene;
 		scene.init();
 
-		// Caméra perspective pour TP6
+		// CamÃ©ra perspective pour TP6
 		PerspectiveCamera cam( Vec3f( 2.0f, 6.0f, -9.0f ),
 							   Vec3f( 0.0f, -13.0f, 15.0f ),
 							   Vec3f( 0.0f, 1.0f, 0.0f ),
