@@ -10,7 +10,7 @@ namespace RT_ISICG
 		RAY_CAST = 0,
 		DIRECT_LIGHT,
 		WHITTED_INTEGRATOR,
-		COUNT // must stay last
+		COUNT 
 	};
 
 	class BaseIntegrator

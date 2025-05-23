@@ -21,7 +21,7 @@ namespace RT_ISICG
 
 		inline const Vec3f & getFlatColor() const override { return BLACK; }
 
-		bool isMirror() const { return true; }
+		const bool isMirror() const { return true; }
 
 	  protected:
 		// Pas d’attributs supplémentaires

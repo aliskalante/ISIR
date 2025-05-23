@@ -18,7 +18,7 @@ namespace RT_ISICG
 
 		inline const Vec3f & getFlatColor() const { return _color; }
 
-		inline const bool isSurface() const { return _isSurface; }
+		inline const bool getIsSurface() const { return _isSurface; }
 
 		virtual LightSample sample( const Vec3f & p_point ) const = 0;
 

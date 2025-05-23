@@ -1,8 +1,8 @@
 #ifndef __RT_ISICG_MATTE_MATERIAL__
 #define __RT_ISICG_MATTE_MATERIAL__
 
-#include "base_material.hpp"
-#include "brdfs/Oren_NayarBRDF.hpp"
+#include "materials/base_material.hpp"
+#include "Oren_NayarBRDF.hpp"
 #include "defines.hpp"
 
 namespace RT_ISICG

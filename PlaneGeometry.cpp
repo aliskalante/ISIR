@@ -1,5 +1,5 @@
 
-#include "plane_geometry.hpp"
+#include "PlaneGeometry.hpp"
 
 namespace RT_ISICG
 {

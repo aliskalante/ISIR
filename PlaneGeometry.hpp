@@ -2,7 +2,7 @@
 #ifndef __RT_ISICG_PLANE_GEOMETRY__
 #define __RT_ISICG_PLANE_GEOMETRY__
 
-#include "base_geometry.hpp"
+#include "geometry/base_geometry.hpp"
 
 namespace RT_ISICG
 {

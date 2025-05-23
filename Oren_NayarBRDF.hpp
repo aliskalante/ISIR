@@ -1,4 +1,4 @@
-// oren_nayar_brdf.hpp
+
 #ifndef __RT_ISICG_BRDF_ORENNAYAR__
 #define __RT_ISICG_BRDF_ORENNAYAR__
 

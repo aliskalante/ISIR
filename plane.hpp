@@ -3,7 +3,7 @@
 #define __RT_ISICG_PLANE__
 
 #include "objects/base_object.hpp"
-#include "geometry/PlaneGeometry.hpp"
+#include "PlaneGeometry.hpp"
 
 namespace RT_ISICG
 {
