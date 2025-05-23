@@ -8,7 +8,9 @@ namespace RT_ISICG
 	enum class IntegratorType : int
 	{
 		RAY_CAST = 0,
-		COUNT // keep it last
+		DIRECT_LIGHT,
+		WHITTED_INTEGRATOR,
+		COUNT // must stay last
 	};
 
 	class BaseIntegrator
@@ -17,18 +19,18 @@ namespace RT_ISICG
 		BaseIntegrator()		  = default;
 		virtual ~BaseIntegrator() = default;
 
-		virtual const IntegratorType getType() const = 0;
+		// Type of this integrator
+		virtual IntegratorType getType() const = 0;
 
-		// Return incoming luminance.
-		virtual Vec3f Li( const Scene & p_scene, const Ray & p_ray, const float p_tMin, const float p_tMax ) const = 0;
+		// Return incoming radiance for the given ray/scene interval
+		virtual Vec3f Li( const Scene & scene, const Ray & ray, float tMin, float tMax ) const = 0;
 
 		const Vec3f & getBackgroundColor() const { return _backgroundColor; }
-		void		  setBackgroundColor( const Vec3f & p_color ) { _backgroundColor = p_color; }
+		void		  setBackgroundColor( const Vec3f & col ) { _backgroundColor = col; }
 
 	  protected:
 		Vec3f _backgroundColor = BLACK;
 	};
-
 } // namespace RT_ISICG
 
 #endif // __RT_ISICG_BASE_INTEGRATOR__

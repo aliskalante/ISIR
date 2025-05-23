@@ -24,6 +24,7 @@ namespace RT_ISICG
 
 		virtual const std::string & getName() const final { return _name; }
 
+
 	  protected:
 		std::string _name;
 	};
