@@ -12,7 +12,7 @@ namespace RT_ISICG
 		WhittedIntegrator()			 = default;
 		virtual ~WhittedIntegrator() = default;
 
-		 IntegratorType getType() const override { return IntegratorType::WHITTED_INTEGRATOR; }
+		IntegratorType getType() const override { return IntegratorType::WHITTED_INTEGRATOR; }
 
 		// Return incoming luminance.
 		Vec3f Li( const Scene & scene, const Ray & ray, const float tMin, const float tMax ) const override;

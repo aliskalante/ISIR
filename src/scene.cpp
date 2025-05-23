@@ -19,150 +19,142 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <iostream>
+#include <stdexcept>
 
 namespace RT_ISICG
 {
-	Scene::Scene() { _addMaterial( new ColorMaterial( "default", WHITE ) ); }
+	Scene::Scene() { addMaterial( new ColorMaterial( "default", WHITE ) ); }
 
 	Scene::~Scene()
 	{
-		for ( auto & [ key, objPtr ] : objectRegistry )
-			delete objPtr;
-		for ( auto & [ key, matPtr ] : materialRegistry )
-			delete matPtr;
-		for ( auto * lightPtr : lightsCollection )
-			delete lightPtr;
+		for ( auto & kv : _objects )
+			delete kv.second;
+		for ( auto & kv : _materials )
+			delete kv.second;
+		for ( auto * lt : _lights )
+			delete lt;
 	}
 
 	void Scene::init()
 	{
-		// Pas d'initialisation par défaut
+		addMaterial( new MatteMaterial( "WhiteMatte", WHITE, 0.6f ) );
+		addMaterial( new MatteMaterial( "RedMatte", RED, 0.6f ) );
+		addMaterial( new MatteMaterial( "GreenMatte", GREEN, 0.6f ) );
+		addMaterial( new MatteMaterial( "BlueMatte", BLUE, 0.6f ) );
+		addMaterial( new MatteMaterial( "GreyMatte", GREY, 0.6f ) );
+		addMaterial( new MatteMaterial( "MagentaMatte", MAGENTA, 0.6f ) );
+		addMaterial( new MirrorMaterial( "MirrorMat" ) );
+		addMaterial( new TransparentMaterial( "Glass", 1.3f ) );
+
+		addObject( new ImplicitLink( "Link", Vec3f( 3, 0, 3 ), 0.9f, 0.5f, 0.5f ) );
+		linkMaterial( "BlueMatte", "Link" );
+		addObject( new ImplicitOctahedron( "Octa", Vec3f( 7, 0, -3 ), 0.9f ) );
+		linkMaterial( "RedMatte", "Octa" );
+		addObject( new Sphere( "Sphere2", Vec3f( -2, 0, 2 ), 1.5f ) );
+		linkMaterial( "WhiteMatte", "Sphere2" );
+
+		addObject( new Plane( "Ground", Vec3f( 0, -3, 0 ), Vec3f( 0, 1, 0 ) ) );
+		linkMaterial( "MirrorMat", "Ground" );
+		addObject( new Plane( "Ceiling", Vec3f( 0, 7, 0 ), Vec3f( 0, -1, 0 ) ) );
+		linkMaterial( "Glass", "Ceiling" );
+
+		addLight( new PointLight( Vec3f( 0, 5, 0 ), WHITE, 100.f ) );
 	}
 
-	void Scene::loadFileTriangleMesh( const std::string & meshName, const std::string & filePath )
+	void Scene::loadFileTriangleMesh( const std::string & alias, const std::string & path )
 	{
-		std::cout << "Importing mesh from: " << filePath << std::endl;
-		Assimp::Importer sceneImporter;
-		const aiScene *	 importedScene
-			= sceneImporter.ReadFile( filePath, aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_GenUVCoords );
-		if ( !importedScene ) throw std::runtime_error( "Cannot load mesh: " + filePath );
+		std::cout << "Loading " << path << std::endl;
+		Assimp::Importer importer;
+		const aiScene *	 sc
+			= importer.ReadFile( path, aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_GenUVCoords );
+		if ( !sc ) throw std::runtime_error( "Cannot load " + path );
 
-		unsigned int totalTriangles = 0;
-		unsigned int totalVertices	= 0;
-		for ( unsigned int meshIndex = 0; meshIndex < importedScene->mNumMeshes; ++meshIndex )
+		unsigned totalF = 0, totalV = 0;
+		for ( unsigned i = 0; i < sc->mNumMeshes; ++i )
 		{
-			const aiMesh * srcMesh = importedScene->mMeshes[ meshIndex ];
-			if ( !srcMesh ) throw std::runtime_error( "Mesh is null in file: " + filePath );
-			std::string fullName = meshName + "_" + srcMesh->mName.C_Str();
-			std::cout << " - Processing mesh " << meshIndex + 1 << "/" << importedScene->mNumMeshes << ": " << fullName
-					  << std::endl;
-
-			totalTriangles += srcMesh->mNumFaces;
-			totalVertices += srcMesh->mNumVertices;
-
-			bool		   hasUV	 = srcMesh->HasTextureCoords( 0 );
-			MeshTriangle * triLoader = new MeshTriangle( fullName );
-			for ( unsigned int vIndex = 0; vIndex < srcMesh->mNumVertices; ++vIndex )
+			auto *		   m	   = sc->mMeshes[ i ];
+			std::string	   name	   = alias + "_" + m->mName.C_Str();
+			MeshTriangle * meshObj = new MeshTriangle( name );
+			bool		   useUV   = m->HasTextureCoords( 0 );
+			for ( unsigned v = 0; v < m->mNumVertices; ++v )
 			{
-				const auto & v = srcMesh->mVertices[ vIndex ];
-				triLoader->addVertex( v.x, v.y, v.z );
-				const auto & n = srcMesh->mNormals[ vIndex ];
-				triLoader->addNormal( n.x, n.y, n.z );
-				if ( hasUV )
-				{
-					const auto & uv = srcMesh->mTextureCoords[ 0 ][ vIndex ];
-					triLoader->addUV( uv.x, uv.y );
-				}
+				meshObj->addVertex( m->mVertices[ v ].x, m->mVertices[ v ].y, m->mVertices[ v ].z );
+				meshObj->addNormal( m->mNormals[ v ].x, m->mNormals[ v ].y, m->mNormals[ v ].z );
+				if ( useUV ) meshObj->addUV( m->mTextureCoords[ 0 ][ v ].x, m->mTextureCoords[ 0 ][ v ].y );
 			}
-			for ( unsigned int fIndex = 0; fIndex < srcMesh->mNumFaces; ++fIndex )
+			for ( unsigned f = 0; f < m->mNumFaces; ++f )
 			{
-				const aiFace & face = srcMesh->mFaces[ fIndex ];
-				triLoader->addTriangle( face.mIndices[ 0 ], face.mIndices[ 1 ], face.mIndices[ 2 ] );
+				auto & face = m->mFaces[ f ];
+				meshObj->addTriangle( face.mIndices[ 0 ], face.mIndices[ 1 ], face.mIndices[ 2 ] );
 			}
-			_addObject( triLoader );
+			totalF += m->mNumFaces;
+			totalV += m->mNumVertices;
+			addObject( meshObj );
 
-			const aiMaterial * matInfo = importedScene->mMaterials[ srcMesh->mMaterialIndex ];
-			if ( !matInfo ) { std::cerr << "  No material found for " << fullName << ", using default." << std::endl; }
-			else
+			const aiMaterial * mat = sc->mMaterials[ m->mMaterialIndex ];
+			Vec3f			   kd  = WHITE;
+			if ( mat )
 			{
-				aiColor3D kdCol, ksCol;
-				float	  shininess = 0.0f;
-				matInfo->Get( AI_MATKEY_COLOR_DIFFUSE, kdCol );
-				matInfo->Get( AI_MATKEY_COLOR_SPECULAR, ksCol );
-				matInfo->Get( AI_MATKEY_SHININESS, shininess );
-				aiString nameData;
-				matInfo->Get( AI_MATKEY_NAME, nameData );
-
-				Vec3f diffuse( kdCol.r, kdCol.g, kdCol.b );
-				_addMaterial( new ColorMaterial( nameData.C_Str(), diffuse ) );
-				_attachMaterialToObject( nameData.C_Str(), fullName );
+				aiColor3D c;
+				if ( mat->Get( AI_MATKEY_COLOR_DIFFUSE, c ) == AI_SUCCESS ) kd = Vec3f( c.r, c.g, c.b );
+				aiString nm;
+				mat->Get( AI_MATKEY_NAME, nm );
+				addMaterial( new ColorMaterial( nm.C_Str(), kd ) );
+				linkMaterial( nm.C_Str(), name );
 			}
-			std::cout << "   -> Imported " << triLoader->getNbTriangles() << " tris, " << triLoader->getNbVertices()
-					  << " verts." << std::endl;
+			std::cout << "Loaded " << name << " (" << m->mNumFaces << " faces, " << m->mNumVertices << " verts)\n";
 		}
-		std::cout << "Finished loading " << importedScene->mNumMeshes << " meshes: " << totalTriangles << " triangles, "
-				  << totalVertices << " vertices." << std::endl;
+		std::cout << "Total " << sc->mNumMeshes << " meshes, " << totalF << " faces, " << totalV << " verts\n";
 	}
 
 	bool Scene::intersect( const Ray & ray, float tMin, float tMax, HitRecord & rec ) const
 	{
-		bool  hitFound	 = false;
-		float currentMax = tMax;
-		for ( const auto & entry : objectRegistry )
+		bool  hitAny  = false;
+		float closest = tMax;
+		for ( auto & kv : _objects )
 		{
-			if ( entry.second->intersect( ray, tMin, currentMax, rec ) )
+			if ( kv.second->intersect( ray, tMin, closest, rec ) )
 			{
-				currentMax = rec._distance;
-				hitFound   = true;
+				closest = rec._distance;
+				hitAny	= true;
 			}
 		}
-		return hitFound;
+		return hitAny;
 	}
 
 	bool Scene::intersectAny( const Ray & ray, float tMin, float tMax ) const
 	{
-		for ( const auto & entry : objectRegistry )
-			if ( entry.second->intersectAny( ray, tMin, tMax ) ) return true;
+		for ( auto & kv : _objects )
+			if ( kv.second->intersectAny( ray, tMin, tMax ) ) return true;
 		return false;
 	}
 
-	void Scene::_addObject( BaseObject * object )
+	void Scene::addMaterial( BaseMaterial * mat )
 	{
-		const std::string & name = object->getName();
-		if ( objectRegistry.count( name ) )
-		{
-			std::cerr << "[Scene] Object '" << name << "' exists!" << std::endl;
-			delete object;
-		}
+		auto name = mat->getName();
+		if ( _materials.count( name ) )
+			delete mat;
+		else
+			_materials[ name ] = mat;
+	}
+
+	void Scene::addObject( BaseObject * obj )
+	{
+		auto name = obj->getName();
+		if ( _objects.count( name ) )
+			delete obj;
 		else
 		{
-			objectRegistry[ name ] = object;
-			object->setMaterial( materialRegistry.at( "default" ) );
+			_objects[ name ] = obj;
+			obj->setMaterial( _materials[ "default" ] );
 		}
 	}
 
-	void Scene::_addMaterial( BaseMaterial * material )
-	{
-		const std::string & name = material->getName();
-		if ( materialRegistry.count( name ) )
-		{
-			std::cerr << "[Scene] Material '" << name << "' exists!" << std::endl;
-			delete material;
-		}
-		else { materialRegistry[ name ] = material; }
-	}
+	void Scene::addLight( BaseLight * light ) { _lights.push_back( light ); }
 
-	void Scene::_addLight( BaseLight * light ) { lightsCollection.push_back( light ); }
-
-	void Scene::_attachMaterialToObject( const std::string & matName, const std::string & objName )
+	void Scene::linkMaterial( const std::string & matName, const std::string & objName )
 	{
-		auto objIt = objectRegistry.find( objName );
-		auto matIt = materialRegistry.find( matName );
-		if ( objIt == objectRegistry.end() ) { std::cerr << " No object: " << objName << std::endl; }
-		else if ( matIt == materialRegistry.end() )
-		{
-			std::cerr << " No material: " << matName << " for object " << objName << std::endl;
-		}
-		else { objIt->second->setMaterial( matIt->second ); }
+		if ( !_objects.count( objName ) || !_materials.count( matName ) ) return;
+		_objects[ objName ]->setMaterial( _materials[ matName ] );
 	}
 } // namespace RT_ISICG

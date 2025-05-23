@@ -1,4 +1,4 @@
-// renderer.cpp
+
 #include "renderer.hpp"
 #include "integrators/DirectLightingIntegrator.hpp"
 #include "integrators/WhittedIntegrator.hpp"

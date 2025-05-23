@@ -27,7 +27,7 @@ namespace RT_ISICG
 		// Configure le moteur de rendu
 		Renderer engine;
 		engine.setNbPixelSamples( 32 );
-		engine.setIntegrator( IntegratorType::WhittedIntegrator );
+		engine.setIntegrator( IntegratorType::WHITTED_INTEGRATOR );
 		engine.setBackgroundColor( GREY );
 
 		// Lancement du rendu

@@ -34,4 +34,3 @@ namespace RT_ISICG
 } // namespace RT_ISICG
 
 #endif // __RT_ISICG_QUADLIGHT__
-

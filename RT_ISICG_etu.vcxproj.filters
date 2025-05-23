@@ -107,56 +107,29 @@
     <ClCompile Include="src\bvh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\geometry\PlaneGeometry.cpp">
+      <Filter>Source Files\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\integrators\DirectLightingIntegrator.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\integrators\WhittedIntegrator.cpp">
+      <Filter>Source Files\integrators</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lights\PointLight.cpp">
+      <Filter>Source Files\lights</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lights\QuadLight.cpp">
+      <Filter>Source Files\lights</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lights\SpotLight.cpp">
+      <Filter>Source Files\lights</Filter>
+    </ClCompile>
     <ClCompile Include="src\objects\implicit_surface.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="Oren_NayarBRDF.hpp">
-      <Filter>Header Files\brdfs</Filter>
-    </ClCompile>
-    <ClCompile Include="cook_torrance.hpp">
-      <Filter>Header Files\brdfs</Filter>
-    </ClCompile>
-    <ClCompile Include="PlaneGeometry.cpp">
-      <Filter>Source Files\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectLightingIntegrator.cpp">
-      <Filter>Source Files\integrators</Filter>
-    </ClCompile>
-    <ClCompile Include="WhittedIntegrator.hpp">
-      <Filter>Header Files\integrators</Filter>
-    </ClCompile>
-    <ClCompile Include="WhittedIntegrator.cpp">
-      <Filter>Source Files\integrators</Filter>
-    </ClCompile>
-    <ClCompile Include="PointLight.cpp">
-      <Filter>Source Files\lights</Filter>
-    </ClCompile>
-    <ClCompile Include="QuadLight.cpp">
-      <Filter>Source Files\lights</Filter>
-    </ClCompile>
-    <ClCompile Include="SpotLight.cpp">
-      <Filter>Source Files\lights</Filter>
-    </ClCompile>
-    <ClCompile Include="mate_material.hpp">
-      <Filter>Header Files\materials</Filter>
-    </ClCompile>
-    <ClCompile Include="mirror_material.hpp">
-      <Filter>Header Files\materials</Filter>
-    </ClCompile>
-    <ClCompile Include="plane.hpp">
-      <Filter>Header Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Plane.cpp">
+    <ClCompile Include="src\objects\Plane.cpp">
       <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="implicit_link.hpp">
-      <Filter>Header Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="implicit_octahedron.hpp">
-      <Filter>Header Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="implicit_sphere.hpp">
-      <Filter>Header Files\objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -244,34 +217,61 @@
     <ClInclude Include="src\objects\implicit_surface.hpp">
       <Filter>Header Files\objects</Filter>
     </ClInclude>
-    <ClInclude Include="PhongBRDF.hpp">
+    <ClInclude Include="src\brdfs\cook_torrance.hpp">
       <Filter>Header Files\brdfs</Filter>
     </ClInclude>
-    <ClInclude Include="PlaneGeometry.hpp">
+    <ClInclude Include="src\brdfs\Oren_NayarBRDF.hpp">
+      <Filter>Header Files\brdfs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\brdfs\PhongBRDF.hpp">
+      <Filter>Header Files\brdfs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\geometry\PlaneGeometry.hpp">
       <Filter>Header Files\geometry</Filter>
     </ClInclude>
-    <ClInclude Include="DirectLightingIntegrator.hpp">
+    <ClInclude Include="src\integrators\WhittedIntegrator.hpp">
       <Filter>Header Files\integrators</Filter>
     </ClInclude>
-    <ClInclude Include="PointLight.hpp">
+    <ClInclude Include="src\integrators\DirectLightingIntegrator.hpp">
+      <Filter>Header Files\integrators</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lights\PointLight.hpp">
       <Filter>Header Files\lights</Filter>
     </ClInclude>
-    <ClInclude Include="QuadLight.hpp">
+    <ClInclude Include="src\lights\QuadLight.hpp">
       <Filter>Header Files\lights</Filter>
     </ClInclude>
-    <ClInclude Include="SpotLight.hpp">
+    <ClInclude Include="src\lights\SpotLight.hpp">
       <Filter>Header Files\lights</Filter>
     </ClInclude>
-    <ClInclude Include="plastic_material.hpp">
+    <ClInclude Include="src\materials\mate_material.hpp">
       <Filter>Header Files\materials</Filter>
     </ClInclude>
-    <ClInclude Include="real_material.hpp">
+    <ClInclude Include="src\materials\mirror_material.hpp">
       <Filter>Header Files\materials</Filter>
     </ClInclude>
-    <ClInclude Include="transparent_material.hpp">
+    <ClInclude Include="src\materials\plastic_material.hpp">
       <Filter>Header Files\materials</Filter>
     </ClInclude>
-    <ClInclude Include="implicit_cylindre.hpp">
+    <ClInclude Include="src\materials\real_material.hpp">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="src\materials\transparent_material.hpp">
+      <Filter>Header Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="src\objects\implicit_cylindre.hpp">
+      <Filter>Header Files\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\objects\implicit_link.hpp">
+      <Filter>Header Files\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\objects\implicit_octahedron.hpp">
+      <Filter>Header Files\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\objects\implicit_sphere.hpp">
+      <Filter>Header Files\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\objects\plane.hpp">
       <Filter>Header Files\objects</Filter>
     </ClInclude>
   </ItemGroup>

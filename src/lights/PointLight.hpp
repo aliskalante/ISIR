@@ -11,8 +11,7 @@ namespace RT_ISICG
 		PointLight()		  = delete;
 		virtual ~PointLight() = default;
 		PointLight( const Vec3f & p_position, const Vec3f & p_color, float p_power )
-			: BaseLight( p_color, p_power, /*isSurface=*/false ) ,
-			_lightPos( p_position )
+			: BaseLight( p_color, p_power, /*isSurface=*/false ), _lightPos( p_position )
 		{
 		}
 

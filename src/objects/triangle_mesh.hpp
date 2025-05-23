@@ -1,10 +1,10 @@
-// mesh_triangle.hpp
+
 #ifndef __RT_ISICG_MESH_TRIANGLE__
 #define __RT_ISICG_MESH_TRIANGLE__
 
 #include "aabb.hpp"
 #include "base_object.hpp"
-#include "triangle_mesh_geometry.hpp"
+#include "geometry/triangle_mesh_geometry.hpp"
 #include <vector>
 
 namespace RT_ISICG

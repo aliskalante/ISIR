@@ -1,19 +1,19 @@
-#ifndef RT_ISICG_SCENE_HPP
-#define RT_ISICG_SCENE_HPP
+// scene.hpp
+#ifndef __RT_ISICG_SCENE__
+#define __RT_ISICG_SCENE__
 
 #include "defines.hpp"
 #include "lights/base_light.hpp"
 #include "objects/base_object.hpp"
-#include <exception>
 #include <map>
 #include <string>
 #include <vector>
 
 namespace RT_ISICG
 {
-	using ObjectMap	  = std::map<std::string, BaseObject *>;
-	using MaterialMap = std::map<std::string, BaseMaterial *>;
-	using LightList	  = std::vector<BaseLight *>;
+	using ObjMap   = std::map<std::string, BaseObject *>;
+	using MatMap   = std::map<std::string, BaseMaterial *>;
+	using LightVec = std::vector<BaseLight *>;
 
 	class Scene
 	{
@@ -21,29 +21,24 @@ namespace RT_ISICG
 		Scene();
 		~Scene();
 
-		// Setup methods
 		void init();
-		void init( const std::string & path );
+		void init( const std::string & path ) { throw std::exception( "Not implemented" ); }
+		void loadFileTriangleMesh( const std::string & alias, const std::string & path );
 
-		// Import mesh from file
-		void loadFileTriangleMesh( const std::string & meshName, const std::string & filePath );
-
-		const LightList & getLights() const;
-
-		// Ray intersections
-		bool intersect( const Ray & ray, float tMin, float tMax, HitRecord & rec ) const;
+		bool intersect( const Ray & ray, float tMin, float tMax, HitRecord & record ) const;
 		bool intersectAny( const Ray & ray, float tMin, float tMax ) const;
 
-	  private:
-		void _addObject( BaseObject * object );
-		void _addMaterial( BaseMaterial * material );
-		void _addLight( BaseLight * light );
-		void _attachMaterialToObject( const std::string & matName, const std::string & objName );
+		const LightVec & getLights() const { return _lights; }
 
-		ObjectMap	objectRegistry;
-		MaterialMap materialRegistry;
-		LightList	lightsCollection;
+	  private:
+		void addMaterial( BaseMaterial * mat );
+		void addObject( BaseObject * obj );
+		void addLight( BaseLight * light );
+		void linkMaterial( const std::string & matName, const std::string & objName );
+
+		ObjMap	 _objects;
+		MatMap	 _materials;
+		LightVec _lights;
 	};
 } // namespace RT_ISICG
-
-#endif // RT_ISICG_SCENE_HPP
+#endif // __RT_ISICG_SCENE__

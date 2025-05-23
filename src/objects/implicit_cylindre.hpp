@@ -10,7 +10,7 @@ namespace RT_ISICG
 	class ImplicitCylindre : public ImplicitSurface
 	{
 	  public:
-		ImplicitCylindre()			 = delete;
+		ImplicitCylindre()			= delete;
 		virtual ~ImplicitCylindre() = default;
 
 		ImplicitCylindre( const std::string & p_name,
