@@ -1,20 +1,19 @@
-#ifndef __RT_ISICG_SCENE__
-#define __RT_ISICG_SCENE__
+#ifndef RT_ISICG_SCENE_HPP
+#define RT_ISICG_SCENE_HPP
 
 #include "defines.hpp"
 #include "lights/base_light.hpp"
 #include "objects/base_object.hpp"
 #include <exception>
 #include <map>
+#include <string>
 #include <vector>
 
 namespace RT_ISICG
 {
-	using ObjectMap		  = std::map<const std::string, BaseObject *>;
-	using ObjectMapPair	  = ObjectMap::value_type;
-	using MaterialMap	  = std::map<const std::string, BaseMaterial *>;
-	using MaterialMapPair = MaterialMap::value_type;
-	using LightList		  = std::vector<BaseLight *>;
+	using ObjectMap	  = std::map<std::string, BaseObject *>;
+	using MaterialMap = std::map<std::string, BaseMaterial *>;
+	using LightList	  = std::vector<BaseLight *>;
 
 	class Scene
 	{
@@ -22,31 +21,29 @@ namespace RT_ISICG
 		Scene();
 		~Scene();
 
-		// Hard coded initialization.
+		// Setup methods
 		void init();
+		void init( const std::string & path );
 
-		// Initialization from file.
-		void init( const std::string & p_path ) { throw std::exception( "Not implemented !" ); }
+		// Import mesh from file
+		void loadFileTriangleMesh( const std::string & meshName, const std::string & filePath );
 
-		const LightList & getLights() const { return _lightList; }
+		const LightList & getLights() const;
 
-		// Check for nearest intersection between p_tMin and p_tMax : if found fill p_hitRecord.
-		bool intersect( const Ray & p_ray, const float p_tMin, const float p_tMax, HitRecord & p_hitRecord ) const;
-
-		bool intersectAny( const Ray & p_ray, const float p_tMin, const float p_tMax ) const;
-
-	  private:
-		void _addObject( BaseObject * p_object );
-		void _addMaterial( BaseMaterial * p_material );
-		void _addLight( BaseLight * p_light );
-
-		void _attachMaterialToObject( const std::string & p_materialName, const std::string & p_objectName );
+		// Ray intersections
+		bool intersect( const Ray & ray, float tMin, float tMax, HitRecord & rec ) const;
+		bool intersectAny( const Ray & ray, float tMin, float tMax ) const;
 
 	  private:
-		ObjectMap	_objectMap;
-		MaterialMap _materialMap;
-		LightList	_lightList;
+		void _addObject( BaseObject * object );
+		void _addMaterial( BaseMaterial * material );
+		void _addLight( BaseLight * light );
+		void _attachMaterialToObject( const std::string & matName, const std::string & objName );
+
+		ObjectMap	objectRegistry;
+		MaterialMap materialRegistry;
+		LightList	lightsCollection;
 	};
 } // namespace RT_ISICG
 
-#endif // __RT_ISICG_SCENE__
+#endif // RT_ISICG_SCENE_HPP

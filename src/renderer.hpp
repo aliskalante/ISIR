@@ -1,5 +1,5 @@
-#ifndef __RT_ISICG_RENDERER__
-#define __RT_ISICG_RENDERER__
+#ifndef RT_ISICG_RENDERER_HPP
+#define RT_ISICG_RENDERER_HPP
 
 #include "cameras/base_camera.hpp"
 #include "defines.hpp"
@@ -13,22 +13,18 @@ namespace RT_ISICG
 	{
 	  public:
 		Renderer();
-		~Renderer() { delete _integrator; }
+		~Renderer();
 
-		void setIntegrator( const IntegratorType p_integratorType );
-		void setBackgroundColor( const Vec3f & p_color );
+		void		setIntegrator( IntegratorType type );
+		void		setBackgroundColor( const Vec3f & bg );
+		inline void setSamplerCount( int n ) { samplerCount = n; }
 
-		inline void setNbPixelSamples( const int p_nbPixelSamples ) { _nbPixelSamples = p_nbPixelSamples; }
-		inline void setNbBounces( const int p_nbBounces ) { _nbBounces = p_nbBounces; }
-		inline void setNbLightSamples( const int p_nbLightSamples ) { _nbLightSamples = p_nbLightSamples; }
-		float		renderImage( const Scene & p_scene, const BaseCamera * p_camera, Texture & p_texture );
+		float renderImage( const Scene & scene, const BaseCamera * camera, Texture & tex );
 
 	  private:
-		BaseIntegrator * _integrator	 = nullptr;
-		int				 _nbPixelSamples = 32;
-		int				 _nbLightSamples = 1;
-		int				 _nbBounces		 = 5;
+		BaseIntegrator * integratorPtr;
+		int				 samplerCount;
 	};
 } // namespace RT_ISICG
 
-#endif // __RT_ISICG_RENDERER__
+#endif // RT_ISICG_RENDERER_HPP

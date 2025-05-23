@@ -1,14 +1,24 @@
 #include "scene.hpp"
-//#include "lights/QuadLight.h"
-//#include "lights/point_light.h"
-//#include "materials/BlinnPlasticMaterial.h"
-//#include "materials/MatteMaterial.h"
-//#include "materials/MicrofacetMaterial.h"
-//#include "materials/MirrorMaterial.h"
+#include "lights/PointLight.hpp"
+#include "lights/QuadLight.hpp"
 #include "materials/color_material.hpp"
 #include "materials/lambert_material.hpp"
-//#include "objects/plane.hpp"
+#include "materials/mate_material.hpp"
+#include "materials/mirror_material.hpp"
+#include "materials/plastic_material.hpp"
+#include "materials/real_material.hpp"
+#include "materials/transparent_material.hpp"
+#include "objects/Plane.hpp"
+#include "objects/implicit_cylindre.hpp"
+#include "objects/implicit_link.hpp"
+#include "objects/implicit_octahedron.hpp"
+#include "objects/implicit_sphere.hpp"
 #include "objects/sphere.hpp"
+#include "objects/triangle_mesh.hpp"
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+#include <iostream>
 
 namespace RT_ISICG
 {
@@ -16,126 +26,143 @@ namespace RT_ISICG
 
 	Scene::~Scene()
 	{
-		for ( const ObjectMapPair & object : _objectMap )
-		{
-			delete object.second;
-		}
-		for ( const MaterialMapPair & material : _materialMap )
-		{
-			delete material.second;
-		}
-		for ( const BaseLight * light : _lightList )
-		{
-			delete light;
-		}
+		for ( auto & [ key, objPtr ] : objectRegistry )
+			delete objPtr;
+		for ( auto & [ key, matPtr ] : materialRegistry )
+			delete matPtr;
+		for ( auto * lightPtr : lightsCollection )
+			delete lightPtr;
 	}
 
 	void Scene::init()
-	{ /*
-		// =========================================================================
-		// Add materials
-		// =========================================================================
-		_addMaterial( new MatteMaterial( "WhiteMatte", WHITE, 0.6f ) );
-		_addMaterial( new MatteMaterial( "RedMatte", RED, 0.6f ) );
-		_addMaterial( new MatteMaterial( "GreenMatte", GREEN, 0.6f ) );
-		_addMaterial( new MatteMaterial( "BlueMatte", BLUE, 0.6f ) );
-		_addMaterial( new MatteMaterial( "GreyMatte", GREY, 0.6f ) );
-		_addMaterial( new MatteMaterial( "MagentaMatte", MAGENTA, 0.6f ) );
-		_addMaterial( new MirrorMaterial( "Mirror" ) );
-
-		// =========================================================================
-		// Add objects
-		// =========================================================================
-		_addObject( new Sphere( "Sphere1", Vec3f( -2.f, 0.f, 3.f ), 1.5f ) );
-		_attachMaterialToObject( "Mirror", "Sphere1" );
-		//_attachMaterialToObject( "WhiteMatte", "Sphere1" );
-
-		//_addObject( new Sphere( "Sphere2", Vec3f( 2.f, 0.f, 3.f ), 1.5f ) );
-		//_attachMaterialToObject( "WhiteMatte", "Sphere2" );
-		_attachMaterialToObject( "Mirror", "Sphere2" );
-
-		_addObject( new Plane( "PlaneGround", Vec3f( 0.f, -3.f, 0.f ), Vec3f( 0.f, 1.f, 0.f ) ) );
-		_attachMaterialToObject( "GreyMatte", "PlaneGround" );
-		_addObject( new Plane( "PlaneLeft", Vec3f( 5.f, 0.f, 0.f ), Vec3f( -1.f, 0.f, 0.f ) ) );
-		_attachMaterialToObject( "RedMatte", "PlaneLeft" );
-		_addObject( new Plane( "PlaneCeiling", Vec3f( 0.f, 7.f, 0.f ), Vec3f( 0.f, -1.f, 0.f ) ) );
-		_attachMaterialToObject( "GreenMatte", "PlaneCeiling" );
-		_addObject( new Plane( "PlaneRight", Vec3f( -5.f, 0.f, 0.f ), Vec3f( 1.f, 0.f, 0.f ) ) );
-		_attachMaterialToObject( "BlueMatte", "PlaneRight" );
-		_addObject( new Plane( "PlaneFront", Vec3f( 0.f, 0.f, 10.f ), Vec3f( 0.f, 0.f, -1.f ) ) );
-		_attachMaterialToObject( "MagentaMatte", "PlaneFront" );
-
-		// Add Lights
-		_addLight( new PointLight( WHITE, 100.f, Vec3f( 0.f, 5.f, 0.f ) ) );
-		//_addLight( new QuadLight( Vec3f( 1, 5, 1 ), Vec3f( -2, 0, 0 ), Vec3f( 0, 1, 2 ), WHITE, 40.f ) );*/
+	{
+		// Pas d'initialisation par défaut
 	}
 
-	bool Scene::intersect( const Ray & p_ray, const float p_tMin, const float p_tMax, HitRecord & p_hitRecord ) const
+	void Scene::loadFileTriangleMesh( const std::string & meshName, const std::string & filePath )
 	{
-		float tMax = p_tMax;
-		bool  hit  = false;
-		for ( const ObjectMapPair & object : _objectMap )
+		std::cout << "Importing mesh from: " << filePath << std::endl;
+		Assimp::Importer sceneImporter;
+		const aiScene *	 importedScene
+			= sceneImporter.ReadFile( filePath, aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_GenUVCoords );
+		if ( !importedScene ) throw std::runtime_error( "Cannot load mesh: " + filePath );
+
+		unsigned int totalTriangles = 0;
+		unsigned int totalVertices	= 0;
+		for ( unsigned int meshIndex = 0; meshIndex < importedScene->mNumMeshes; ++meshIndex )
 		{
-			if ( object.second->intersect( p_ray, p_tMin, tMax, p_hitRecord ) )
+			const aiMesh * srcMesh = importedScene->mMeshes[ meshIndex ];
+			if ( !srcMesh ) throw std::runtime_error( "Mesh is null in file: " + filePath );
+			std::string fullName = meshName + "_" + srcMesh->mName.C_Str();
+			std::cout << " - Processing mesh " << meshIndex + 1 << "/" << importedScene->mNumMeshes << ": " << fullName
+					  << std::endl;
+
+			totalTriangles += srcMesh->mNumFaces;
+			totalVertices += srcMesh->mNumVertices;
+
+			bool		   hasUV	 = srcMesh->HasTextureCoords( 0 );
+			MeshTriangle * triLoader = new MeshTriangle( fullName );
+			for ( unsigned int vIndex = 0; vIndex < srcMesh->mNumVertices; ++vIndex )
 			{
-				tMax = p_hitRecord._distance; // update tMax to conserve the nearest hit
-				hit	 = true;
+				const auto & v = srcMesh->mVertices[ vIndex ];
+				triLoader->addVertex( v.x, v.y, v.z );
+				const auto & n = srcMesh->mNormals[ vIndex ];
+				triLoader->addNormal( n.x, n.y, n.z );
+				if ( hasUV )
+				{
+					const auto & uv = srcMesh->mTextureCoords[ 0 ][ vIndex ];
+					triLoader->addUV( uv.x, uv.y );
+				}
+			}
+			for ( unsigned int fIndex = 0; fIndex < srcMesh->mNumFaces; ++fIndex )
+			{
+				const aiFace & face = srcMesh->mFaces[ fIndex ];
+				triLoader->addTriangle( face.mIndices[ 0 ], face.mIndices[ 1 ], face.mIndices[ 2 ] );
+			}
+			_addObject( triLoader );
+
+			const aiMaterial * matInfo = importedScene->mMaterials[ srcMesh->mMaterialIndex ];
+			if ( !matInfo ) { std::cerr << "  No material found for " << fullName << ", using default." << std::endl; }
+			else
+			{
+				aiColor3D kdCol, ksCol;
+				float	  shininess = 0.0f;
+				matInfo->Get( AI_MATKEY_COLOR_DIFFUSE, kdCol );
+				matInfo->Get( AI_MATKEY_COLOR_SPECULAR, ksCol );
+				matInfo->Get( AI_MATKEY_SHININESS, shininess );
+				aiString nameData;
+				matInfo->Get( AI_MATKEY_NAME, nameData );
+
+				Vec3f diffuse( kdCol.r, kdCol.g, kdCol.b );
+				_addMaterial( new ColorMaterial( nameData.C_Str(), diffuse ) );
+				_attachMaterialToObject( nameData.C_Str(), fullName );
+			}
+			std::cout << "   -> Imported " << triLoader->getNbTriangles() << " tris, " << triLoader->getNbVertices()
+					  << " verts." << std::endl;
+		}
+		std::cout << "Finished loading " << importedScene->mNumMeshes << " meshes: " << totalTriangles << " triangles, "
+				  << totalVertices << " vertices." << std::endl;
+	}
+
+	bool Scene::intersect( const Ray & ray, float tMin, float tMax, HitRecord & rec ) const
+	{
+		bool  hitFound	 = false;
+		float currentMax = tMax;
+		for ( const auto & entry : objectRegistry )
+		{
+			if ( entry.second->intersect( ray, tMin, currentMax, rec ) )
+			{
+				currentMax = rec._distance;
+				hitFound   = true;
 			}
 		}
-		return hit;
+		return hitFound;
 	}
 
-	bool Scene::intersectAny( const Ray & p_ray, const float p_tMin, const float p_tMax ) const
+	bool Scene::intersectAny( const Ray & ray, float tMin, float tMax ) const
 	{
-		for ( const ObjectMapPair & object : _objectMap )
-		{
-			if ( object.second->intersectAny( p_ray, p_tMin, p_tMax ) ) { return true; }
-		}
+		for ( const auto & entry : objectRegistry )
+			if ( entry.second->intersectAny( ray, tMin, tMax ) ) return true;
 		return false;
 	}
 
-	void Scene::_addObject( BaseObject * p_object )
+	void Scene::_addObject( BaseObject * object )
 	{
-		const std::string & name = p_object->getName();
-		if ( _objectMap.find( name ) != _objectMap.end() )
+		const std::string & name = object->getName();
+		if ( objectRegistry.count( name ) )
 		{
-			std::cout << "[Scene::addObject] Object \'" << name << "\' already exists" << std::endl;
-			delete p_object;
+			std::cerr << "[Scene] Object '" << name << "' exists!" << std::endl;
+			delete object;
 		}
 		else
 		{
-			_objectMap[ name ] = p_object;
-			_objectMap[ name ]->setMaterial( _materialMap[ "default" ] );
+			objectRegistry[ name ] = object;
+			object->setMaterial( materialRegistry.at( "default" ) );
 		}
 	}
 
-	void Scene::_addMaterial( BaseMaterial * p_material )
+	void Scene::_addMaterial( BaseMaterial * material )
 	{
-		const std::string & name = p_material->getName();
-		if ( _materialMap.find( name ) != _materialMap.end() )
+		const std::string & name = material->getName();
+		if ( materialRegistry.count( name ) )
 		{
-			std::cout << "[Scene::addMaterial] Material \'" << name << "\' already exists" << std::endl;
-			delete p_material;
+			std::cerr << "[Scene] Material '" << name << "' exists!" << std::endl;
+			delete material;
 		}
-		else { _materialMap[ name ] = p_material; }
+		else { materialRegistry[ name ] = material; }
 	}
 
-	void Scene::_addLight( BaseLight * p_light ) { _lightList.emplace_back( p_light ); }
+	void Scene::_addLight( BaseLight * light ) { lightsCollection.push_back( light ); }
 
-	void Scene::_attachMaterialToObject( const std::string & p_materialName, const std::string & p_objectName )
+	void Scene::_attachMaterialToObject( const std::string & matName, const std::string & objName )
 	{
-		if ( _objectMap.find( p_objectName ) == _objectMap.end() )
+		auto objIt = objectRegistry.find( objName );
+		auto matIt = materialRegistry.find( matName );
+		if ( objIt == objectRegistry.end() ) { std::cerr << " No object: " << objName << std::endl; }
+		else if ( matIt == materialRegistry.end() )
 		{
-			std::cout << "[Scene::attachMaterialToObject] Object \'" << p_objectName << "\' does not exist"
-					  << std::endl;
+			std::cerr << " No material: " << matName << " for object " << objName << std::endl;
 		}
-		else if ( _materialMap.find( p_materialName ) == _materialMap.end() )
-		{
-			std::cout << "[Scene::attachMaterialToObject] Material \'" << p_materialName << "\' does not exist, "
-					  << "object \'" << p_objectName << "\' keeps its material \'"
-					  << _objectMap[ p_objectName ]->getMaterial()->getName() << "\'" << std::endl;
-		}
-		else { _objectMap[ p_objectName ]->setMaterial( _materialMap[ p_materialName ] ); }
+		else { objIt->second->setMaterial( matIt->second ); }
 	}
-
 } // namespace RT_ISICG

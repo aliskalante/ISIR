@@ -1,86 +1,68 @@
+
 #include "renderer.hpp"
-//#include "integrators/Whitted_integrator.h"
-//#include "integrators/direct_lighting_integrator.h"
+#include "integrators/direct_lighting_integrator.hpp"
 #include "integrators/ray_cast_integrator.hpp"
+#include "integrators/whitted_integrator.hpp"
 #include "utils/console_progress_bar.hpp"
 #include "utils/random.hpp"
+#include <iostream>
 
 namespace RT_ISICG
 {
-	Renderer::Renderer() { _integrator = new RayCastIntegrator(); }
+	Renderer::Renderer() : samplerCount( 1 ), integratorPtr( nullptr ) { integratorPtr = new RayCastIntegrator(); }
 
-	void Renderer::setIntegrator( const IntegratorType p_integratorType )
+	Renderer::~Renderer() { delete integratorPtr; }
+
+	void Renderer::setIntegrator( IntegratorType type )
 	{
-		if ( _integrator != nullptr ) { delete _integrator; }
-
-		switch ( p_integratorType )
+		delete integratorPtr;
+		switch ( type )
 		{
-		/* case IntegratorType::DIRECT_LIGHT:
-		{
-			_integrator = new DirectLightingIntegrator( _nbLightSamples );
-			break;
-		}*/
+		case IntegratorType::DIRECT_LIGHT: integratorPtr = new DirectLightingIntegrator(); break;
+		case IntegratorType::Whitted_Integrator: integratorPtr = new WhittedIntegrator(); break;
 		case IntegratorType::RAY_CAST:
-		{
-			_integrator = new RayCastIntegrator();
-			break;
-		}
-
-		default:
-		{
-			_integrator = new RayCastIntegrator();
-			break;
-		}
-		/* case IntegratorType::WHITTED:
-		{
-			_integrator = new WhittedIntegrator( _nbLightSamples, _nbBounces );
-			break;
-		}*/
+		default: integratorPtr = new RayCastIntegrator(); break;
 		}
 	}
 
-	void Renderer::setBackgroundColor( const Vec3f & p_color )
+	void Renderer::setBackgroundColor( const Vec3f & bg )
 	{
-		if ( _integrator == nullptr ) { std::cout << "[Renderer::setBackgroundColor] Integrator is null" << std::endl; }
-		else { _integrator->setBackgroundColor( p_color ); }
+		if ( integratorPtr )
+			integratorPtr->setBackgroundColor( bg );
+		else
+			std::cerr << "[Renderer::setBackgroundColor] Pas d'intégrateur défini\n";
 	}
 
-	float Renderer::renderImage( const Scene & p_scene, const BaseCamera * p_camera, Texture & p_texture )
+	float Renderer::renderImage( const Scene & scene, const BaseCamera * camera, Texture & tex )
 	{
-		const int width	 = p_texture.getWidth();
-		const int height = p_texture.getHeight();
-
-		Chrono			   chrono;
-		ConsoleProgressBar progressBar;
-
-		progressBar.start( height, 50 );
-		chrono.start();
+		const int		   W = tex.getWidth();
+		const int		   H = tex.getHeight();
+		Chrono			   clk;
+		ConsoleProgressBar bar;
+		bar.start( H, 50 );
+		clk.start();
 
 #pragma omp parallel for
-		for ( int j = 0; j < height; j++ )
+		for ( int y = 0; y < H; ++y )
 		{
-			for ( int i = 0; i < width; i++ )
+			for ( int x = 0; x < W; ++x )
 			{
-				Vec3f color = VEC3F_ZERO;
-				auto  r		= double( i ) / ( width - 1 );
-				auto  g		= double( j ) / ( height - 1 );
-				auto  b		= 0;
-				for ( int x = 0; x < _nbPixelSamples; x++ )
+				Vec3f accum( 0.0f );
+				for ( int s = 0; s < samplerCount; ++s )
 				{
-					Ray ray = p_camera->generateRay( ( i + randomFloat() ) / ( width - 1.f ),
-													 ( j + randomFloat() ) / ( height - 1.f ) );
-					color += _integrator->Li( p_scene, ray, 0, 1000 );
+					float u	  = ( x + randomFloat() ) / float( W - 1 );
+					float v	  = ( y + randomFloat() ) / float( H - 1 );
+					Ray	  ray = camera->generateRay( u, v );
+					accum += integratorPtr->Li( scene, ray, 0.0f, 2500.0f );
 				}
-				// p_texture.setPixel( i, j, ( color / (float)_nbPixelSamples ) );
-				p_texture.setPixel(
-					i, j, glm::clamp( color / float( _nbPixelSamples ), VEC3F_ZERO, Vec3f( 1, 1, 1 ) ) );
+				Vec3f result = glm::clamp( accum / float( samplerCount ), Vec3f( 0 ), Vec3f( 1 ) );
+				tex.setPixel( x, y, result );
 			}
-			progressBar.next();
+			bar.next();
 		}
 
-		chrono.stop();
-		progressBar.stop();
-
-		return chrono.elapsedTime();
+		clk.stop();
+		bar.stop();
+		return clk.elapsedTime();
 	}
 } // namespace RT_ISICG
