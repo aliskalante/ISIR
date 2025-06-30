@@ -1,39 +1,38 @@
-
 #include "sphere_geometry.hpp"
-#include <cmath>
-#include <glm/glm.hpp>
-#include <glm/gtc/constants.hpp>
+
 
 namespace RT_ISICG
 {
-	bool SphereGeometry::intersect( const Ray & p_ray, float & p_tNear, float & p_tFar ) const
+	bool SphereGeometry::intersect( const Ray & p_ray, float & p_t1, float & p_t2 ) const
 	{
-		// Calcul du vecteur du point d'origine du rayon vers le centre de la sphère
-		Vec3f originToCenter = p_ray.getOrigin() - _centerPos;
 
-		// Coefficients du polynôme quadratique
-		float bCoef = 2.0f * glm::dot( originToCenter, p_ray.getDirection() );
-		float cCoef = glm::dot( originToCenter, originToCenter ) - _radiusVal * _radiusVal;
+		/// TODO !
+		Vec3f oc = p_ray.getOrigin() - _center; 
+		float a	 = glm::dot( p_ray.getDirection(), p_ray.getDirection() ); 
+		float b	 = 2.0f * glm::dot( oc, p_ray.getDirection() );			 
+		float c	 = glm::dot( oc,oc ) - _radius * _radius;			
+		
 
-		float discriminant = bCoef * bCoef - 4.0f * cCoef;
-		if ( discriminant < 0.0f ) { return false; }
+		float discriminant = b * b - 4 * a * c;
 
-		float sqrtDisc = std::sqrt( discriminant );
-		float tA	   = ( -bCoef - sqrtDisc ) * 0.5f;
-		float tB	   = ( -bCoef + sqrtDisc ) * 0.5f;
-
-		// On range tNear et tFar dans l'ordre croissant
-		if ( tA < tB )
+		if ( discriminant < 0 )
 		{
-			p_tNear = tA;
-			p_tFar	= tB;
+			
+			return false;
 		}
 		else
 		{
-			p_tNear = tB;
-			p_tFar	= tA;
-		}
+			discriminant = std::sqrt( discriminant );
+			p_t1		 = ( -b - discriminant ) / ( 2.0f * a );
+			p_t2		 = ( -b + discriminant ) / ( 2.0f * a );
 
-		return true;
+			if ( p_t1 > p_t2 ) { std::swap( p_t1, p_t2 ); }
+
+			p_t1 = -1.f;
+			p_t2 = -1.f;
+
+			return true;
+		}
 	}
+
 } // namespace RT_ISICG

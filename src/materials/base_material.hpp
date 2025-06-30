@@ -1,38 +1,31 @@
 #ifndef __RT_ISICG_BASE_MATERIAL__
 #define __RT_ISICG_BASE_MATERIAL__
 
-#include "defines.hpp"
 #include "hit_record.hpp"
-#include "light_sample.hpp"
+#include "lights/light_sample.hpp"
 #include "ray.hpp"
-#include <string>
 
 namespace RT_ISICG
 {
 	class BaseMaterial
 	{
 	  public:
-		BaseMaterial( const std::string & name ) : _name( name ) {}
+		BaseMaterial() = delete;
+		BaseMaterial( const std::string & p_name ) : _name( p_name ) {}
 		virtual ~BaseMaterial() = default;
 
-		// retourne la luminance sous l’éclairage donné
-		virtual Vec3f shade( const Ray & ray, const HitRecord & hit, const LightSample & lightSample ) const = 0;
+		virtual Vec3f shade( const Ray &		 p_ray,
+							 const HitRecord &	 p_hitRecord,
+							 const LightSample & p_lightSample ) const = 0;
 
-		// couleur uniforme utilisée pour les objets sans shading
-		virtual const Vec3f & getFlatColor() const = 0;
+		virtual inline const Vec3f & getFlatColor() const = 0;
 
-		
-		virtual bool isMirror() const { return false; }
-		
-		virtual bool isTransparent() const { return false; }
-		
-		virtual float getIOR() const { return 1.0f; }
+		virtual const std::string & getName() const final { return _name; }
 
-		const std::string & getName() const { return _name; }
-
-	  private:
+	  protected:
 		std::string _name;
 	};
+
 } // namespace RT_ISICG
 
 #endif // __RT_ISICG_BASE_MATERIAL__

@@ -1,63 +1,63 @@
-// bvh.cpp
 #include "bvh.hpp"
 #include "geometry/triangle_mesh_geometry.hpp"
 #include "utils/chrono.hpp"
-#include <iostream>
-#include <stdexcept>
 
 namespace RT_ISICG
 {
-	void BVH::build( std::vector<TriangleMeshGeometry> * p_meshList )
+	void BVH::build( std::vector<TriangleMeshGeometry> * p_triangles )
 	{
-		std::cout << "Constructing BVH..." << std::endl;
-		if ( p_meshList == nullptr || p_meshList->empty() )
+		std::cout << "Building BVH..." << std::endl;
+		if ( p_triangles == nullptr || p_triangles->empty() )
 		{
-			throw std::runtime_error( "BVH::build error no triangles supplied" );
+			throw std::exception( "BVH::build() error: no triangle provided" );
 		}
-		_triangles = p_meshList;
+		_triangles = p_triangles;
 
-		Chrono timer;
-		timer.start();
+		Chrono chr;
+		chr.start();
 
-		/// TODO: réellement construire la hiérarchie ici
+		/// TODO
 
-		timer.stop();
-		std::cout << "Completed in " << timer.elapsedTime() << "s" << std::endl;
+		chr.stop();
+
+		std::cout << "[DONE]: " << chr.elapsedTime() << "s" << std::endl;
 	}
 
-	bool BVH::intersect( const Ray & p_ray, const float p_tMin, const float p_tMax, HitRecord & p_hitRec ) const
+	bool BVH::intersect( const Ray & p_ray, const float p_tMin, const float p_tMax, HitRecord & p_hitRecord ) const
 	{
-		/// TODO: descendre la hiérarchie et remplir p_hitRec
-		return _intersectRec( _root, p_ray, p_tMin, p_tMax, p_hitRec );
+		/// TODO
+		return false;
 	}
 
 	bool BVH::intersectAny( const Ray & p_ray, const float p_tMin, const float p_tMax ) const
 	{
-		/// TODO: intersection rapide, sans record
-		return _intersectAnyRec( _root, p_ray, p_tMin, p_tMax );
-	}
-
-	void BVH::_buildRec( BVHNode *			node,
-						 const unsigned int startIdx,
-						 const unsigned int triCount,
-						 const unsigned int depthLevel )
-	{
-		/// TODO: split ou leaf selon triCount et depthLevel
-	}
-
-	bool BVH::_intersectRec( const BVHNode * node,
-							 const Ray &	 ray,
-							 const float	 tMin,
-							 const float	 tMax,
-							 HitRecord &	 rec ) const
-	{
-		/// TODO: intersection récursive
+		/// TODO
 		return false;
 	}
 
-	bool BVH::_intersectAnyRec( const BVHNode * node, const Ray & ray, const float tMin, const float tMax ) const
+	void BVH::_buildRec( BVHNode *			p_node,
+						 const unsigned int p_firstTriangleId,
+						 const unsigned int p_lastTriangleId,
+						 const unsigned int p_depth )
 	{
-		/// TODO: test d’intersection court-circuité
+		/// TODO
+	}
+
+	bool BVH::_intersectRec( const BVHNode * p_node,
+							 const Ray &	 p_ray,
+							 const float	 p_tMin,
+							 const float	 p_tMax,
+							 HitRecord &	 p_hitRecord ) const
+	{
+		/// TODO
+		return false;
+	}
+	bool BVH::_intersectAnyRec( const BVHNode * p_node,
+								const Ray &		p_ray,
+								const float		p_tMin,
+								const float		p_tMax ) const
+	{
+		/// TODO
 		return false;
 	}
 } // namespace RT_ISICG

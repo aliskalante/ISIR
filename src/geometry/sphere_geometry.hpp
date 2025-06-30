@@ -11,26 +11,24 @@ namespace RT_ISICG
 		SphereGeometry()		  = delete;
 		virtual ~SphereGeometry() = default;
 
-		SphereGeometry( const Vec3f & p_centerPos, float p_radiusVal )
-			: _centerPos( p_centerPos ), _radiusVal( p_radiusVal )
-		{
-		}
+		SphereGeometry( const Vec3f & p_center, const float p_radius ) : _center( p_center ), _radius( p_radius ) {}
 
-		inline const Vec3f & getCenter() const { return _centerPos; }
-		inline float		 getRadius() const { return _radiusVal; }
+		inline const Vec3f & getCenter() const { return _center; }
+		inline const float	 getRadius() const { return _radius; }
 
-		bool intersect( const Ray & p_ray, float & p_tNear, float & p_tFar ) const;
+		bool intersect( const Ray & p_ray, float & p_t1, float & p_t2 ) const;
 
 		inline Vec3f computeNormal( const Vec3f & p_point ) const
 		{
-			// Retourne la normale normalisée au point d'intersection
-			return glm::normalize( p_point - _centerPos );
+			/// TODO !
+			return Vec3f( 1.f );
 		}
 
 	  private:
-		Vec3f _centerPos = VEC3F_ZERO;
-		float _radiusVal = 1.0f;
+		Vec3f _center = VEC3F_ZERO;
+		float _radius = 1.f;
 	};
+
 } // namespace RT_ISICG
 
 #endif // __RT_ISICG_SPHERE_GEOMETRY__

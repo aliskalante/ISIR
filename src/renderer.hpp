@@ -1,4 +1,3 @@
-
 #ifndef __RT_ISICG_RENDERER__
 #define __RT_ISICG_RENDERER__
 
@@ -16,11 +15,12 @@ namespace RT_ISICG
 		Renderer();
 		~Renderer() { delete _integrator; }
 
-		float renderImage( const Scene & scene, const BaseCamera * camera, Texture & target );
+		void setIntegrator( const IntegratorType p_integratorType );
+		void setBackgroundColor( const Vec3f & p_color );
 
-		inline void setNbPixelSamples( int samples ) { _nbPixelSamples = samples; }
-		void		setBackgroundColor( const Vec3f & clearColor );
-		void		setIntegrator( const IntegratorType mode );
+		inline void setNbPixelSamples( const int p_nbPixelSamples ) { _nbPixelSamples = p_nbPixelSamples; }
+
+		float renderImage( const Scene & p_scene, const BaseCamera * p_camera, Texture & p_texture );
 
 	  private:
 		BaseIntegrator * _integrator	 = nullptr;

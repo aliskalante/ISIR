@@ -1,6 +1,5 @@
-// triangle_mesh_geometry.hpp
-#ifndef __RT_ISICG_TRIANGLE_MESH_GEOMETRY__
-#define __RT_ISICG_TRIANGLE_MESH_GEOMETRY__
+#ifndef __RT_ISICG_TRIANGLE_GEOMETRY__
+#define __RT_ISICG_TRIANGLE_GEOMETRY__
 
 #include "base_geometry.hpp"
 
@@ -14,21 +13,28 @@ namespace RT_ISICG
 		TriangleMeshGeometry()			= delete;
 		virtual ~TriangleMeshGeometry() = default;
 
-		// Initialise with three vertex indices and reference to mesh
-		TriangleMeshGeometry( unsigned int idx0, unsigned int idx1, unsigned int idx2, MeshTriangle * parentMesh );
+		TriangleMeshGeometry( const unsigned int p_v0,
+							  const unsigned int p_v1,
+							  const unsigned int p_v2,
+							  MeshTriangle *	 p_refMesh );
 
-		// Möller–Trumbore intersection test
-		bool intersect( const Ray & ray, float & outT ) const;
+		bool intersect( const Ray & p_ray, float & p_t ) const;
 
-		inline const Vec3f & getFaceNormal() const { return _normalFace; }
+		inline const Vec3f & getFaceNormal() const { return _faceNormal; }
 
 	  private:
-		MeshTriangle * _meshPtr;
-		unsigned int   _i0;
-		unsigned int   _i1;
-		unsigned int   _i2;
-		mutable Vec3f  _normalFace;
+		MeshTriangle * _refMesh;
+		union
+		{
+			struct
+			{
+				unsigned int _v0, _v1, _v2;
+			};
+			unsigned int _v[ 3 ] = { 0, 0, 0 };
+		};
+
+		Vec3f _faceNormal;
 	};
 } // namespace RT_ISICG
 
-#endif // __RT_ISICG_TRIANGLE_MESH_GEOMETRY__
+#endif // __RT_ISICG_TRIANGLE_GEOMETRY__

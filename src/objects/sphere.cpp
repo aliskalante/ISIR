@@ -33,7 +33,6 @@ namespace RT_ISICG
 			if ( t1 > p_tMax ) { return false; }				// first intersection too far
 			if ( t1 < p_tMin ) { t1 = t2; }						// first intersection too near, check second one
 			if ( t1 < p_tMin || t1 > p_tMax ) { return false; } // not in range
-
 			return true;
 		}
 		return false;

@@ -1,7 +1,6 @@
-#ifndef __RT_ISICG_MESH_TRIANGLE__
-#define __RT_ISICG_MESH_TRIANGLE__
+#ifndef __RT_ISICG_TRIANGLE_MESH__
+#define __RT_ISICG_TRIANGLE_MESH__
 
-#include "aabb.hpp"
 #include "base_object.hpp"
 #include "geometry/triangle_mesh_geometry.hpp"
 #include <vector>
@@ -14,38 +13,41 @@ namespace RT_ISICG
 
 	  public:
 		MeshTriangle() = delete;
-		MeshTriangle( const std::string & name ) : BaseObject( name ) {}
+		MeshTriangle( const std::string & p_name ) : BaseObject( p_name ) {}
 		virtual ~MeshTriangle() = default;
 
-		size_t getVertexCount() const { return _vertexList.size(); }
-		size_t getTriangleCount() const { return _faceList.size(); }
+		const size_t getNbTriangles() const { return _triangles.size(); }
+		const size_t getNbVertices() const { return _vertices.size(); }
 
-		inline void addVertex( float x, float y, float z )
+		inline void addTriangle( const unsigned int p_v0, const unsigned int p_v1, const unsigned int p_v2 )
 		{
-			_vertexList.emplace_back( x, y, z );
-			_bounds.extend( Vec3f( x, y, z ) );
-		}
-
-		inline void addNormal( float x, float y, float z ) { _normalList.emplace_back( x, y, z ); }
-
-		inline void addUV( float u, float v ) { _uvList.emplace_back( u, v ); }
-
-		// Ajoute un triangle via indices des sommets
-		inline void addTriangle( unsigned int i0, unsigned int i1, unsigned int i2 )
+			_triangles.emplace_back( TriangleMeshGeometry( p_v0, p_v1, p_v2, this ) );
+		};
+		inline void addVertex( const float p_x, const float p_y, const float p_z )
 		{
-			_faceList.emplace_back( TriangleMeshGeometry( i0, i1, i2, this ) );
+			_vertices.emplace_back( p_x, p_y, p_z );
 		}
+		inline void addNormal( const float p_x, const float p_y, const float p_z )
+		{
+			_normals.emplace_back( p_x, p_y, p_z );
+		}
+		inline void addUV( const float p_u, const float p_v ) { _uvs.emplace_back( p_u, p_v ); }
 
-		bool intersect( const Ray & ray, float tMin, float tMax, HitRecord & record ) const override;
-		bool intersectAny( const Ray & ray, float tMin, float tMax ) const override;
+		// Check for nearest intersection between p_tMin and p_tMax : if found fill p_hitRecord.
+		bool intersect( const Ray & p_ray,
+						const float p_tMin,
+						const float p_tMax,
+						HitRecord & p_hitRecord ) const override;
+
+		// Check for any intersection between p_tMin and p_tMax.
+		bool intersectAny( const Ray & p_ray, const float p_tMin, const float p_tMax ) const override;
 
 	  private:
-		std::vector<Vec3f>				  _vertexList;
-		std::vector<Vec3f>				  _normalList;
-		std::vector<Vec2f>				  _uvList;
-		std::vector<TriangleMeshGeometry> _faceList;
-		AABB							  _bounds;
+		std::vector<Vec3f>				  _vertices;
+		std::vector<Vec3f>				  _normals;
+		std::vector<Vec2f>				  _uvs;
+		std::vector<TriangleMeshGeometry> _triangles;
 	};
 } // namespace RT_ISICG
 
-#endif // __RT_ISICG_MESH_TRIANGLE__
+#endif // __RT_ISICG_TRIANGLE_MESH__
